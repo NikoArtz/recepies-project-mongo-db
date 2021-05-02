@@ -3,10 +3,10 @@ package com.web.recipes.domain;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.DBRef;
 
 import java.math.BigDecimal;
+import java.util.UUID;
 
 /**
  * @author martsiomchyk
@@ -16,8 +16,7 @@ import java.math.BigDecimal;
 @Setter
 @NoArgsConstructor
 public class Ingredient {
-    @Id
-    private String id;
+    private String id = UUID.randomUUID().toString();
     private String description;
     private BigDecimal amount;
     @DBRef

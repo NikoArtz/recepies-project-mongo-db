@@ -9,7 +9,6 @@ import com.web.recipes.repositories.RecipeRepository;
 import com.web.recipes.repositories.UnitOfMeasureRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Optional;
 
@@ -51,12 +50,13 @@ public class IngredientServiceImpl implements IngredientService {
         if (!ingredientCommandOptional.isPresent()) {
             log.error("Ingredient id not found: " + ingredientId);
         }
+        IngredientCommand ingredientCommand = ingredientCommandOptional.get();
+        ingredientCommand.setRecipeId(recipe.getId());
 
         return ingredientCommandOptional.get();
     }
 
     @Override
-    @Transactional
     public IngredientCommand saveIngredientCommand(IngredientCommand command) {
         Optional<Recipe> recipeOptional = recipeRepository.findById(command.getRecipeId());
 
@@ -96,7 +96,10 @@ public class IngredientServiceImpl implements IngredientService {
                         .findFirst();
 
             }
-            return ingredientToIngredientCommand.convert(savedIngredient.get());
+            IngredientCommand ingredientCommandSaved = ingredientToIngredientCommand.convert(savedIngredient.get());
+            ingredientCommandSaved.setRecipeId(recipe.getId());
+
+            return ingredientCommandSaved;
         }
     }
 
@@ -114,7 +117,7 @@ public class IngredientServiceImpl implements IngredientService {
 
             if (ingredientOptional.isPresent()) {
                 Ingredient ingredientToDelete = ingredientOptional.get();
-     
+
                 recipe.getIngredients().remove(ingredientOptional.get());
                 recipeRepository.save(recipe);
             }
