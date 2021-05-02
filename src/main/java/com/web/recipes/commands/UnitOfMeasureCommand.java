@@ -4,10 +4,7 @@ package com.web.recipes.commands;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import org.springframework.data.annotation.Id;
 
 /**
  * @author martsiomchyk
@@ -17,7 +14,6 @@ import javax.persistence.Id;
 @NoArgsConstructor
 public class UnitOfMeasureCommand {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private String id;
     private String description;
 
