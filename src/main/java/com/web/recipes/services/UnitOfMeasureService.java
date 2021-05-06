@@ -1,14 +1,14 @@
 package com.web.recipes.services;
 
 import com.web.recipes.commands.UnitOfMeasureCommand;
+import reactor.core.publisher.Flux;
 
-import java.util.Set;
 
 /**
  * @author martsiomchyk
  */
 
 public interface UnitOfMeasureService {
-    Set<UnitOfMeasureCommand> listAllUoms();
+    Flux<UnitOfMeasureCommand> listAllUoms();
 
 }
