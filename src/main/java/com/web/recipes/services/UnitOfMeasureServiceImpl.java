@@ -19,6 +19,7 @@ public class UnitOfMeasureServiceImpl implements UnitOfMeasureService {
         this.unitOfMeasureReactiveRepositoryRepository = unitOfMeasureReactiveRepositoryRepository;
         this.unitOfMeasureToUnitOfMeasureCommand = unitOfMeasureToUnitOfMeasureCommand;
     }
+
     @Override
     public Flux<UnitOfMeasureCommand> listAllUoms() {
         return unitOfMeasureReactiveRepositoryRepository.findAll()

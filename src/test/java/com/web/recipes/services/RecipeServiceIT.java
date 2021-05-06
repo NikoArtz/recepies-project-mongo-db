@@ -30,7 +30,7 @@ public class RecipeServiceIT {
 
     @Autowired
     RecipeToRecipeCommand recipeToRecipeCommand;
-    
+
     @Test
     public void testSaveOfDescription() throws Exception {
         //given
