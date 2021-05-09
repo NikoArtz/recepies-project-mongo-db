@@ -2,19 +2,19 @@ package com.web.recipes.services;
 
 import com.web.recipes.commands.RecipeCommand;
 import com.web.recipes.domain.Recipe;
-
-import java.util.Set;
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 
 public interface RecipeService {
 
-    Set<Recipe> getRecipes();
+    Flux<Recipe> getRecipes();
 
-    Recipe findById(String id);
+    Mono<Recipe> findById(String id);
 
-    RecipeCommand saveRecipeCommand(RecipeCommand recipeCommand);
+    Mono<RecipeCommand> saveRecipeCommand(RecipeCommand recipeCommand);
 
-    RecipeCommand findCommandById(String id);
+    Mono<RecipeCommand> findCommandById(String id);
 
-    void deleteById(String id);
+    Mono<Void> deleteById(String id);
 
 }

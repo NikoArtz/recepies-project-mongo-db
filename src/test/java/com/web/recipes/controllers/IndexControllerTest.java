@@ -10,8 +10,10 @@ import org.mockito.MockitoAnnotations;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.ui.Model;
+import reactor.core.publisher.Flux;
 
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -56,8 +58,8 @@ class IndexControllerTest {
         recipe.setId("1");
         recipes.add(recipe);
 
-        when(recipeService.getRecipes()).thenReturn(recipes);
-        ArgumentCaptor<Set<Recipe>> argumentCaptor = ArgumentCaptor.forClass(Set.class);
+        when(recipeService.getRecipes()).thenReturn(Flux.fromIterable(recipes));
+        ArgumentCaptor<Flux<Recipe>> argumentCaptor = ArgumentCaptor.forClass(Flux.class);
         //when
         String viewName = indexController.getIndexPage(model);
         //then
@@ -65,7 +67,8 @@ class IndexControllerTest {
         verify(recipeService, times(1)).getRecipes();
         verify(model, times(1)).addAttribute(eq("recipes"), argumentCaptor.capture());
 
-        Set<Recipe> setInController = argumentCaptor.getValue();
+        Flux<Recipe> flux = argumentCaptor.getValue();
+        List<Recipe> setInController = flux.collectList().block();
 
         assertEquals(setInController.size(), 2);
     }
