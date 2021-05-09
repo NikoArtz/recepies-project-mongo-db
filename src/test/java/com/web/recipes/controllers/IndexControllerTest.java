@@ -25,7 +25,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.view;
 
-class IndexControllerTest {
+public class IndexControllerTest {
 
     @Mock
     RecipeService recipeService;
@@ -43,6 +43,8 @@ class IndexControllerTest {
     @Test
     void testMockMVC() throws Exception {
         MockMvc mockMvc = MockMvcBuilders.standaloneSetup(indexController).build();
+        when(recipeService.getRecipes()).thenReturn(Flux.empty());
+
         mockMvc.perform(get("/"))
                 .andExpect(status().isOk())
                 .andExpect(view().name("index"));
@@ -51,7 +53,7 @@ class IndexControllerTest {
     @Test
     void getIndexPage() {
 
-        //given 
+        //given
         Set<Recipe> recipes = new HashSet<>();
         recipes.add(new Recipe());
         Recipe recipe = new Recipe();
@@ -59,18 +61,15 @@ class IndexControllerTest {
         recipes.add(recipe);
 
         when(recipeService.getRecipes()).thenReturn(Flux.fromIterable(recipes));
-        ArgumentCaptor<Flux<Recipe>> argumentCaptor = ArgumentCaptor.forClass(Flux.class);
+        ArgumentCaptor<List<Recipe>> argumentCaptor = ArgumentCaptor.forClass(List.class);
         //when
         String viewName = indexController.getIndexPage(model);
         //then
         assertEquals("index", viewName);
         verify(recipeService, times(1)).getRecipes();
         verify(model, times(1)).addAttribute(eq("recipes"), argumentCaptor.capture());
-
-        Flux<Recipe> flux = argumentCaptor.getValue();
-        List<Recipe> setInController = flux.collectList().block();
-
-        assertEquals(setInController.size(), 2);
+        List<Recipe> setInController = argumentCaptor.getValue();
+        assertEquals(2, setInController.size());
     }
 }
 

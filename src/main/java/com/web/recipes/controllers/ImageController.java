@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
+import reactor.core.publisher.Mono;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.ByteArrayInputStream;
@@ -40,12 +41,12 @@ public class ImageController {
 
     @PostMapping("recipe/{id}/image")
     public String handleImagePost(@PathVariable String id, @RequestParam("image-file") MultipartFile file) {
-        imageService.saveImageFile(id, file);
+        imageService.saveImageFile(id, file).block();
         return "redirect:/recipe/" + id + "/show";
     }
 
     @GetMapping("recipe/{id}/recipe-image")
-    public void renderImageFromDB(@PathVariable String id, HttpServletResponse response) throws IOException {
+    public Mono<Void> renderImageFromDB(@PathVariable String id, HttpServletResponse response) throws IOException {
         RecipeCommand recipeCommand = recipeService.findCommandById(id).block();
         if (recipeCommand.getImage() != null) {
             byte[] byteArray = new byte[recipeCommand.getImage().length];
@@ -58,5 +59,6 @@ public class ImageController {
                 IOUtils.copy(is, response.getOutputStream());
             }
         }
+        return Mono.empty();
     }
 }
