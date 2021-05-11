@@ -3,7 +3,6 @@ package com.web.recipes.controllers;
 import com.web.recipes.commands.RecipeCommand;
 import com.web.recipes.services.ImageService;
 import com.web.recipes.services.RecipeService;
-import org.apache.tomcat.util.http.fileupload.IOUtils;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -13,7 +12,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 import reactor.core.publisher.Mono;
 
-import javax.servlet.http.HttpServletResponse;
+
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -44,21 +43,21 @@ public class ImageController {
         imageService.saveImageFile(id, file).block();
         return "redirect:/recipe/" + id + "/show";
     }
-
-    @GetMapping("recipe/{id}/recipe-image")
-    public Mono<Void> renderImageFromDB(@PathVariable String id, HttpServletResponse response) throws IOException {
-        RecipeCommand recipeCommand = recipeService.findCommandById(id).block();
-        if (recipeCommand.getImage() != null) {
-            byte[] byteArray = new byte[recipeCommand.getImage().length];
-            int i = 0;
-            for (Byte wrapperByte : recipeCommand.getImage()) {
-                byteArray[i++] = wrapperByte;
-            }
-            response.setContentType("image/jpeg");
-            try (InputStream is = new ByteArrayInputStream(byteArray)) {
-                IOUtils.copy(is, response.getOutputStream());
-            }
-        }
-        return Mono.empty();
-    }
+//
+//    @GetMapping("recipe/{id}/recipe-image")
+//    public Mono<Void> renderImageFromDB(@PathVariable String id, HttpServletResponse response) throws IOException {
+//        RecipeCommand recipeCommand = recipeService.findCommandById(id).block();
+//        if (recipeCommand.getImage() != null) {
+//            byte[] byteArray = new byte[recipeCommand.getImage().length];
+//            int i = 0;
+//            for (Byte wrapperByte : recipeCommand.getImage()) {
+//                byteArray[i++] = wrapperByte;
+//            }
+//            response.setContentType("image/jpeg");
+//            try (InputStream is = new ByteArrayInputStream(byteArray)) {
+//                IOUtils.copy(is, response.getOutputStream());
+//            }
+//        }
+//        return Mono.empty();
+//    }
 }
