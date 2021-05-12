@@ -6,12 +6,12 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
-
-import javax.validation.Valid;
 
 /**
  * @author martsiomchyk
@@ -23,16 +23,22 @@ public class RecipeController {
 
     private final RecipeService recipeService;
 
+    private WebDataBinder webDataBinder;
+
     public RecipeController(RecipeService recipeService) {
         this.recipeService = recipeService;
     }
 
     @GetMapping("/recipe/{id}/show")
     public String showById(@PathVariable String id, Model model) {
-        model.addAttribute("recipe", recipeService.findById(id).share().block());
+        model.addAttribute("recipe", recipeService.findById(id));
         return "recipe/show";
     }
 
+    @InitBinder
+    public void initBinder(WebDataBinder webDataBinder) {
+        this.webDataBinder = webDataBinder;
+    }
 
     @GetMapping("/recipe/new")
     public String newRecipe(Model model) {
@@ -47,8 +53,9 @@ public class RecipeController {
     }
 
     @PostMapping("recipe-create")
-    public String saveOrUpdate(@Valid @ModelAttribute("recipe") RecipeCommand recipeCommand, BindingResult bindingResult) {
-
+    public String saveOrUpdate(@ModelAttribute("recipe") RecipeCommand recipeCommand) {
+        webDataBinder.validate();
+        BindingResult bindingResult = webDataBinder.getBindingResult();
         if (bindingResult.hasErrors()) {
             bindingResult.getAllErrors().forEach(objectError -> {
                 log.debug(objectError.toString());
