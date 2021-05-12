@@ -81,7 +81,7 @@ public class IngredientServiceImplTest {
         when(recipeReactiveRepository.findById(anyString())).thenReturn(Mono.just(recipe));
 
         //then
-        IngredientCommand ingredientCommand = ingredientService.findByRecipeIdAndIngredientId("1", "3").block();
+        IngredientCommand ingredientCommand = ingredientService.findByRecipeIdAndIngredientId("1", "3").share().block();
 
         //when
         assertEquals("3", ingredientCommand.getId());
@@ -105,7 +105,7 @@ public class IngredientServiceImplTest {
         when(recipeReactiveRepository.save(any())).thenReturn(Mono.just(savedRecipe));
 
         //when
-        IngredientCommand savedCommand = ingredientService.saveIngredientCommand(command).block();
+        IngredientCommand savedCommand = ingredientService.saveIngredientCommand(command).share().block();
 
         //then
         assertEquals("3", savedCommand.getId());

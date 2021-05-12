@@ -49,7 +49,7 @@ class RecipeServiceImplTest {
         recipe.setId(ID);
         when(recipeReactiveRepository.findById(anyString())).thenReturn(Mono.just(recipe));
 
-        Recipe recipeReturned = recipeService.findById(ID).block();
+        Recipe recipeReturned = recipeService.findById(ID).share().block();
 
         assertNotNull(recipeReturned);
         verify(recipeReactiveRepository, times(1)).findById(anyString());
@@ -61,7 +61,7 @@ class RecipeServiceImplTest {
         Recipe recipe = new Recipe();
         when(recipeReactiveRepository.findAll()).thenReturn(Flux.just(recipe));
 
-        List<Recipe> recipes = recipeService.getRecipes().collectList().block();
+        List<Recipe> recipes = recipeService.getRecipes().collectList().share().block();
 
         assertEquals(1, recipes.size());
         verify(recipeReactiveRepository, times(1)).findAll();
@@ -78,7 +78,7 @@ class RecipeServiceImplTest {
 
         when(recipeToRecipeCommand.convert(any())).thenReturn(recipeCommand);
 
-        RecipeCommand commandById = recipeService.findCommandById("1").block();
+        RecipeCommand commandById = recipeService.findCommandById("1").share().block();
 
         assertNotNull(commandById);
         verify(recipeReactiveRepository, times(1)).findById(anyString());
@@ -88,7 +88,7 @@ class RecipeServiceImplTest {
     @Test
     void deleteByIdTest() {
         when(recipeReactiveRepository.deleteById(anyString())).thenReturn(Mono.empty());
-        recipeService.deleteById(ID).block();
+        recipeService.deleteById(ID).share().block();
         verify(recipeReactiveRepository, times(1)).deleteById(anyString());
     }
 }

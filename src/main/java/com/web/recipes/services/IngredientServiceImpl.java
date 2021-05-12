@@ -67,12 +67,12 @@ public class IngredientServiceImpl implements IngredientService {
                 ingredientFound.setDescription(command.getDescription());
                 ingredientFound.setAmount(command.getAmount());
                 ingredientFound.setUom(unitOfMeasureReactiveRepository
-                        .findById(command.getUom().getId()).block());
+                        .findById(command.getUom().getId()).share().block());
             } else {
                 recipe.addIngredient(ingredientCommandToIngredient.convert(command));
             }
 
-            Recipe savedRecipe = recipeReactiveRepository.save(recipe).block();
+            Recipe savedRecipe = recipeReactiveRepository.save(recipe).share().block();
 
             Optional<Ingredient> savedIngredient = savedRecipe.getIngredients().stream()
                     .filter(recipeIngredients -> recipeIngredients.getId().equals(command.getId()))
@@ -106,7 +106,7 @@ public class IngredientServiceImpl implements IngredientService {
 
             if (ingredientOptional.isPresent()) {
                 recipe.getIngredients().remove(ingredientOptional.get());
-                recipeReactiveRepository.save(recipe).block();
+                recipeReactiveRepository.save(recipe).share().block();
             }
         } else {
             log.debug("Recipe Id Not found. Id:" + recipeId);

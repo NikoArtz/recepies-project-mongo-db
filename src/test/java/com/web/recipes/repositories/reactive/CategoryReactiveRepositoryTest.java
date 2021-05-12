@@ -20,7 +20,7 @@ public class CategoryReactiveRepositoryTest {
 
     @BeforeEach
     public void setUp() throws Exception {
-        categoryReactiveRepository.deleteAll().block();
+        categoryReactiveRepository.deleteAll().share().block();
     }
 
     @Test
@@ -28,9 +28,9 @@ public class CategoryReactiveRepositoryTest {
         Category category = new Category();
         category.setDescription("Foo");
 
-        categoryReactiveRepository.save(category).block();
+        categoryReactiveRepository.save(category).share().block();
 
-        Long count = categoryReactiveRepository.count().block();
+        Long count = categoryReactiveRepository.count().share().block();
 
         assertEquals(1L, count);
     }
@@ -40,9 +40,9 @@ public class CategoryReactiveRepositoryTest {
         Category category = new Category();
         category.setDescription("Foo");
 
-        categoryReactiveRepository.save(category).then().block();
+        categoryReactiveRepository.save(category).then().share().block();
 
-        Category fetchedCat = categoryReactiveRepository.findByDescription("Foo").block();
+        Category fetchedCat = categoryReactiveRepository.findByDescription("Foo").share().block();
 
         assertNotNull(fetchedCat.getId());
     }
