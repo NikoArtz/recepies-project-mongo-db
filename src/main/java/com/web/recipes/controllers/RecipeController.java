@@ -19,7 +19,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 @Slf4j
 @Controller
 public class RecipeController {
-    private static final String RECIPE_RECIPE_FORM_URL = "recipe/recipe-form";
+    private static final String RECIPE_FORM_URL = "recipe/recipe-form";
 
     private final RecipeService recipeService;
 
@@ -35,7 +35,7 @@ public class RecipeController {
         return "recipe/show";
     }
 
-    @InitBinder
+    @InitBinder("recipe")
     public void initBinder(WebDataBinder webDataBinder) {
         this.webDataBinder = webDataBinder;
     }
@@ -43,13 +43,13 @@ public class RecipeController {
     @GetMapping("/recipe/new")
     public String newRecipe(Model model) {
         model.addAttribute("recipe", new RecipeCommand());
-        return RECIPE_RECIPE_FORM_URL;
+        return RECIPE_FORM_URL;
     }
 
     @GetMapping("/recipe/{id}/update")
     public String updateRecipe(@PathVariable String id, Model model) {
         model.addAttribute("recipe", recipeService.findCommandById(id).share().block());
-        return RECIPE_RECIPE_FORM_URL;
+        return RECIPE_FORM_URL;
     }
 
     @PostMapping("recipe-create")
@@ -60,7 +60,7 @@ public class RecipeController {
             bindingResult.getAllErrors().forEach(objectError -> {
                 log.debug(objectError.toString());
             });
-            return RECIPE_RECIPE_FORM_URL;
+            return RECIPE_FORM_URL;
         }
         RecipeCommand savedRecipe = recipeService.saveRecipeCommand(recipeCommand).share().block();
         return "redirect:/recipe/" + savedRecipe.getId() + "/show";

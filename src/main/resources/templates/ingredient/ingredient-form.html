@@ -13,6 +13,9 @@
         <div class="col-md-6 col-md-offset-3">
             <form th:object="${ingredient}" th:action="@{'/recipe/' + ${ingredient.getRecipeId()} + '/ingredient'} "
                   method="post">
+                <div th:if="${#fields.hasErrors('*')}" class="alert alert-danger">
+                    <p>Please Correct Errors Below</p>
+                </div>
                 <input type="hidden" th:field="*{id}"/>
                 <div class="pannel-group; jumbotron">
                     <div class="panel panel-primary">
@@ -20,28 +23,48 @@
                             <h1 class="panel-title">Edit Ingredient Information</h1>
                         </div>
                         <div class="panel-body">
-
-
                             <div class="row">
-                                <div class="col-md-3 form-group">
+
+                                <div class=" ">
                                     <label>Description:</label>
-                                    <input type="text" class="form-control" th:field="*{description}"/>
+                                    <input type="text" class="form-control" th:field="*{description}"
+                                           th:class="${#fields.hasErrors('description')} ? 'form-control is-invalid' : 'form-control'"/>
+                                    <span class="help-block" th:if="${#fields.hasErrors('description')}">
+                                        <ul>
+                                            <li class="text-danger" th:each="err : ${#fields.errors('description')}"
+                                                th:text="${err}"/>
+                                        </ul>
+                                    </span>
                                 </div>
 
                                 <div class="col-md-3 form-group">
                                     <label>Amount:</label>
-                                    <input type="number" class="form-control" th:field="*{amount}"/>
+                                    <input type="number" class="form-control" th:field="*{amount}"
+                                           th:class="${#fields.hasErrors('amount')} ? 'form-control is-invalid' : 'form-control'"/>
+                                    <span class="help-block" th:if="${#fields.hasErrors('amount')}">
+                                        <ul>
+                                            <li class="text-danger" th:each="err : ${#fields.errors('amount')}"
+                                                th:text="${err}"/>
+                                        </ul>
+                                    </span>
                                 </div>
 
                                 <div class="col-md-3 form-group">
                                     <label>UOM:</label>
-                                    <select class="form-control" name="uom.id">
+                                    <select class="form-control" name="uom.id"
+                                            th:class="${#fields.hasErrors('uom')} ? 'form-control is-invalid' : 'form-control'">
                                         <option th:each="uomEach : ${uomList}"
                                                 th:value="${uomEach.getId()}"
                                                 th:selected="${uomEach.getId().equals(ingredient.getUom().getId())}"
                                                 th:text="${uomEach.getDescription()}">Each
                                         </option>
                                     </select>
+                                    <span class="help-block" th:if="${#fields.hasErrors('uom')}">
+                                        <ul>
+                                            <li class="text-danger" th:each="err : ${#fields.errors('uom')}"
+                                                th:text="${err}"/>
+                                        </ul>
+                                    </span>
                                 </div>
                             </div>
                         </div>
