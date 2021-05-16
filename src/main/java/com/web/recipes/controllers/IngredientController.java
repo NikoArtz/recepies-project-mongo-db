@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import reactor.core.publisher.Flux;
 
 /**
  * @author martsiomchyk
@@ -59,20 +60,17 @@ public class IngredientController {
     public String updateRecipeIngredient(@PathVariable String recipeId,
                                          @PathVariable String id, Model model) {
         model.addAttribute("ingredient", ingredientService.findByRecipeIdAndIngredientId(recipeId, id).share().block());
-
-        model.addAttribute("uomList", unitOfMeasureService.listAllUoms().collectList());
         return INGREDIENT_FORM_URL;
     }
 
     @PostMapping("recipe/{recipeId}/ingredient")
-    public String saveOrUpdate(@ModelAttribute("ingredient") IngredientCommand ingredient, Model model) {
+    public String saveOrUpdate(@ModelAttribute("ingredient") IngredientCommand ingredient) {
         webDataBinder.validate();
         BindingResult bindingResult = webDataBinder.getBindingResult();
         if (bindingResult.hasErrors()) {
             bindingResult.getAllErrors().forEach(objectError -> {
                 log.debug(objectError.toString());
             });
-            model.addAttribute("uomList", unitOfMeasureService.listAllUoms().collectList());
             return INGREDIENT_FORM_URL;
         }
         IngredientCommand savedCommand = ingredientService.saveIngredientCommand(ingredient).share().block();
@@ -89,9 +87,7 @@ public class IngredientController {
 
         IngredientCommand ingredientCommand = new IngredientCommand();
         model.addAttribute("ingredient", ingredientCommand);
-
         ingredientCommand.setUom(new UnitOfMeasureCommand());
-        model.addAttribute("uomList", unitOfMeasureService.listAllUoms().collectList());
         return INGREDIENT_FORM_URL;
     }
 
@@ -100,5 +96,10 @@ public class IngredientController {
                                    @PathVariable String id, Model model) {
         ingredientService.deleteById(recipeId, id).share().block();
         return "redirect:/recipe/" + recipeId + "/ingredients";
+    }
+
+    @ModelAttribute("uomList")
+    public Flux<UnitOfMeasureCommand> getUomList() {
+        return unitOfMeasureService.listAllUoms();
     }
 }
