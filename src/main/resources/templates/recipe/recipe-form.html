@@ -14,7 +14,9 @@
                 <div th:if="${#fields.hasErrors('*')}" class="alert alert-danger">
                     <p>Please Correct Errors Below</p>
                 </div>
+                <!--For thymeleaf mapping purposes-->
                 <input type="hidden" th:field="*{id}"/>
+                <input type="hidden" th:field="*{image}"/>
                 <div class="panel-group; jumbotron">
                     <div class="panel panel-primary">
                         <div class="panel-heading">
@@ -154,6 +156,7 @@
                                     </div>
                                     <div th:each="catEach, idx : ${recipe.categories}">
                                         <input type="hidden" th:field="*{categories[__${idx.index}__].id}"/>
+                                        <input type="hidden" th:field="*{categories[__${idx.index}__].description}"/>
                                     </div>
                                 </div>
                             </div>
