@@ -8,6 +8,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
+import org.springframework.web.bind.support.WebExchangeBindException;
 import org.thymeleaf.exceptions.TemplateInputException;
 
 
@@ -18,18 +19,21 @@ import org.thymeleaf.exceptions.TemplateInputException;
 @ControllerAdvice
 public class ControllerExceptionHandler {
 
-    @ExceptionHandler({BadRequestException.class, TemplateInputException.class})
+    @ExceptionHandler({BadRequestException.class, TemplateInputException.class, WebExchangeBindException.class})
     public String handleBadRequestException(Exception exception, Model model, ServerHttpResponse response) {
-       log.error(exception.getClass() + exception.getMessage());
-       
+        log.error(exception.getClass() + exception.getMessage());
+
         HttpStatus responseStatus;
         String exceptionMessage;
         if (exception instanceof BadRequestException) {
             BadRequestException badRequestException = (BadRequestException) exception;
             responseStatus = badRequestException.getStatus();
             exceptionMessage = badRequestException.getReason();
-        } else {
+        } else if (exception instanceof TemplateInputException) {
             responseStatus = HttpStatus.NOT_FOUND;
+            exceptionMessage = exception.getMessage();
+        } else {
+            responseStatus = HttpStatus.BAD_REQUEST;
             exceptionMessage = exception.getMessage();
         }
         response.setStatusCode(responseStatus);
